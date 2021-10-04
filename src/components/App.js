@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Header from './Header';
 import Inventory from './Inventory';
 import Fish from './Fish';
+import Order from './Order';
 
 class App extends Component {
   static propTypes = {};
@@ -18,6 +19,15 @@ class App extends Component {
     // pushed the new fish into the fish state
     fishes[`fish${Date.now()}`] = fish;
     // update the fishes state with new fish
+    this.setState({ fishes });
+  };
+
+  updateFish = (key, updatedFish) => {
+    // take a clone of current fish state
+    const fishes = { ...this.state.fishes };
+    // get specific fish and update with new updatedFish object
+    fishes[key] = updatedFish;
+    // update the fish object with setState
     this.setState({ fishes });
   };
 
@@ -51,12 +61,12 @@ class App extends Component {
             ))}
           </ul>
         </div>
-        <div className='order'>
-          <h2>order</h2>
-        </div>
+        <Order fishes={this.state.fishes} order={this.state.order} />
         <Inventory
           addFish={this.addFish}
+          updateFish={this.updateFish}
           loadSampleFishes={this.loadSampleFishes}
+          fishes={this.state.fishes}
         />
       </div>
     );
