@@ -12,6 +12,7 @@ class EditFishForm extends Component {
     }),
     index: PropTypes.string,
     updateFish: PropTypes.func,
+    removeFish: PropTypes.func,
   };
 
   handleChange = (event) => {
@@ -29,9 +30,8 @@ class EditFishForm extends Component {
 
   render() {
     const { name, price, desc, image, status } = this.props.fish;
-    console.log(price);
     return (
-      <form className='fish-edit'>
+      <div className='fish-edit'>
         <input
           type='text'
           name='name'
@@ -66,8 +66,10 @@ class EditFishForm extends Component {
           value={image}
           onChange={this.handleChange}
         />
-        <button>Remove Fish</button>
-      </form>
+        <button onClick={() => this.props.removeFish(this.props.index)}>
+          Remove Fish
+        </button>
+      </div>
     );
   }
 }

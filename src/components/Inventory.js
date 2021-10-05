@@ -10,6 +10,7 @@ class Inventory extends Component {
     loadSampleFishes: PropTypes.func,
     fishes: PropTypes.object,
     updateFish: PropTypes.func,
+    removeFish: PropTypes.func,
   };
   render() {
     return (
@@ -22,6 +23,7 @@ class Inventory extends Component {
             index={key}
             fish={this.props.fishes[key]}
             updateFish={this.props.updateFish}
+            removeFish={this.props.removeFish}
           />
         ))}
         <button onClick={() => this.props.loadSampleFishes(sampleFishes)}>

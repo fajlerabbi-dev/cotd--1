@@ -1,20 +1,31 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { formatPrice } from '../helpers';
 
 class Order extends React.Component {
   static propTypes = {
     fishes: PropTypes.object,
     order: PropTypes.object,
+    removeOrder: PropTypes.func,
   };
 
   renderOrder = (key) => {
+    const transitionOptions = {
+      key,
+      classNames: 'order',
+      timeout: { enter: 500, exit: 500 },
+    };
     // get fish from fish object by the order key
     const fish = this.props.fishes[key];
     // get order count from the order by the key
     const count = this.props.order[key];
     // check availability
-    const isAvailable = fish.status === 'available';
+    const isAvailable = fish && fish.status === 'available';
+    //make sure the fish is loaded
+    if (!fish) {
+      return;
+    }
     // if fish not available then render this
     if (!isAvailable) {
       return (
@@ -23,15 +34,23 @@ class Order extends React.Component {
     }
     // if fish available render all the fish information
     return (
-      <li key={key}>
-        <span>
-          <span className='count'>
-            <span>{count}</span>
+      <CSSTransition {...transitionOptions}>
+        <li key={key}>
+          <span>
+            <TransitionGroup className='count' component='span'>
+              <CSSTransition
+                classNames='count'
+                key={count}
+                timeout={{ enter: 500, exit: 500 }}>
+                <span>{count}</span>
+              </CSSTransition>
+            </TransitionGroup>
+            {fish.name}{' '}
+            <button onClick={() => this.props.removeOrder(key)}>×</button>
           </span>
-          {fish.name} <button>×</button>
-        </span>
-        <span className='price'>{formatPrice(fish.price)}</span>
-      </li>
+          <span className='price'>{formatPrice(fish.price)}</span>
+        </li>
+      </CSSTransition>
     );
   };
 
@@ -43,7 +62,8 @@ class Order extends React.Component {
       // get order count from the order by the key
       const count = this.props.order[key];
       // check availability
-      if (fish.status === 'available') {
+      const isAvailable = fish && fish.status === 'available';
+      if (isAvailable) {
         // calculate the order with previous value
         return prevTotal + fish.price * count;
       }
@@ -52,9 +72,9 @@ class Order extends React.Component {
     return (
       <div className='order'>
         <h2>Order</h2>
-        <ul className='order'>
+        <TransitionGroup component='ul' className='order'>
           {Object.keys(this.props.order).map(this.renderOrder)}
-        </ul>
+        </TransitionGroup>
         <div className='total'>
           <strong>Total: {formatPrice(total)}</strong>
         </div>
